@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from 'react-native'
+
 import {
   Container,
   Header,
@@ -8,8 +8,11 @@ import {
   Photo,
   User,
   UserGreeting,
-  UserName
+  UserName,
+  Icon
 } from './styles'
+import styled from 'styled-components'
+import { RFValue } from 'react-native-responsive-fontsize'
 
 export function Dashboard() {
   return (
@@ -23,8 +26,11 @@ export function Dashboard() {
               <UserName>Nelson</UserName>
             </User>
           </UserInfo>
+
+          <Icon name="power" />
         </UserWrapper>
       </Header>
     </Container>
   )
 }
+
