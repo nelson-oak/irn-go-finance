@@ -9,10 +9,9 @@ import {
   User,
   UserGreeting,
   UserName,
-  Icon
+  Icon,
+  HighlightCards
 } from './styles'
-import styled from 'styled-components'
-import { RFValue } from 'react-native-responsive-fontsize'
 import { HighlightCard } from '../../components/HighlightCard'
 
 export function Dashboard() {
@@ -32,7 +31,11 @@ export function Dashboard() {
         </UserWrapper>
       </Header>
 
-      <HighlightCard />
+      <HighlightCards>
+        <HighlightCard />
+        <HighlightCard />
+        <HighlightCard />
+      </HighlightCards>
     </Container>
   )
 }
