@@ -17,6 +17,7 @@ interface ICategory {
 }
 
 interface IData {
+  type: 'positive' | 'negative'
   title: string
   amount: string
   category: ICategory
@@ -32,7 +33,10 @@ export function TransactionCard({ data }: ITransactionCardProps) {
     <Container>
       <Title>{data.title}</Title>
 
-      <Amount>{data.amount}</Amount>
+      <Amount type={data.type}>
+        { data.type === 'negative' && '- '}
+        {data.amount}
+      </Amount>
 
       <Footer>
         <Category>
