@@ -10,7 +10,7 @@ import {
   LastTransaction,
 } from './styles'
 
-interface HighlightCardProps {
+interface IHighlightCardProps {
   type: 'up' | 'down' | 'total'
   title: string
   amount: string
@@ -28,7 +28,7 @@ export function HighlightCard({
   title,
   amount,
   lastTransaction
-}: HighlightCardProps) {
+}: IHighlightCardProps) {
   return (
     <Container type={type}>
       <Header>
