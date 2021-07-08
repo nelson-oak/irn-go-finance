@@ -8,11 +8,16 @@ import {
 
 interface IButtonProps extends RectButtonProps {
   title: string
+  onPress: () => void
 }
 
-export function Button({ title, ...rest}: IButtonProps) {
+export function Button({
+  title,
+  onPress,
+  ...rest
+}: IButtonProps) {
   return (
-    <Container {...rest}>
+    <Container onPress={onPress} {...rest}>
       <Title>{title}</Title>
     </Container>
   )
