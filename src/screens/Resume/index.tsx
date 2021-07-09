@@ -2,6 +2,8 @@ import React,  { useCallback, useEffect, useState } from 'react'
 import { useTheme } from 'styled-components'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { VictoryPie } from 'victory-native'
+import { addMonths, subMonths, format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 import { HistoryCard } from '../../components/HistoryCard'
 
@@ -39,9 +41,17 @@ interface ICategoriesTotal {
 }
 
 export function Resume() {
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const [categoriesTotal, setCategoriesTotal] = useState<ICategoriesTotal[]>([])
 
   const theme = useTheme()
+
+  function handleDateChange(action: 'prev' | 'next') {
+    if (action === 'prev') {
+      setSelectedDate(subMonths(selectedDate, 1));    } else {
+      setSelectedDate(addMonths(selectedDate, 1));
+    }
+  }
 
   async function loadData() {
     const dataKey = '@gofinances:transactions'
@@ -50,7 +60,11 @@ export function Resume() {
     const transactions: ITransactionData[] = data ? JSON.parse(data) : []
 
     const outcome = transactions
-      .filter(transaction => transaction.transactionType === 'down')
+      .filter(transaction => {
+        return transaction.transactionType === 'down'
+          && new Date(transaction.date).getMonth() === selectedDate.getMonth()
+          && new Date(transaction.date).getFullYear() === selectedDate.getFullYear()
+      })
 
     const outcomeTotal = outcome
       .reduce((accumulator, transaction) => {
@@ -92,7 +106,7 @@ export function Resume() {
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [selectedDate])
 
   useFocusEffect(useCallback(() => {
     loadData()
@@ -105,13 +119,15 @@ export function Resume() {
       </Header>
 
       <MonthSelect>
-        <MonthSelectButton>
+        <MonthSelectButton onPress={() => handleDateChange('prev')}>
           <MonthSelectIcon name="chevron-left" />
         </MonthSelectButton>
 
-        <Month>Agosto</Month>
+        <Month>
+          {format(selectedDate, 'MMMM, yyyy', { locale: ptBR })}
+        </Month>
         
-        <MonthSelectButton>
+        <MonthSelectButton onPress={() => handleDateChange('next')}>
           <MonthSelectIcon name="chevron-right" />
         </MonthSelectButton>
       </MonthSelect>
@@ -126,9 +142,10 @@ export function Resume() {
               fontWeight: 'bold',
               fill: theme.colors.shape,
               fontSize: RFValue(14)
-            }
+            },
           }}
-          labelRadius={80}
+          height={RFValue(300)}
+          labelRadius={RFValue(70)}
           x="percentage"
           y="total"
         />
