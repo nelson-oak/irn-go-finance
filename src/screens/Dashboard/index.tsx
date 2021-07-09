@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { useTheme } from 'styled-components'
 import { useFocusEffect } from '@react-navigation/core'
-
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import {
   Container,
@@ -23,8 +23,7 @@ import {
 } from './styles'
 import { HighlightCard } from '../../components/HighlightCard'
 import { ITransactionCardData, TransactionCard } from '../../components/TransactionCard'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useCallback } from 'react'
+import { useAuth } from '../../hooks/auth'
 
 export interface ITransactionListData extends ITransactionCardData {
   id: string
@@ -46,6 +45,8 @@ export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [transactions, setTransactions] = useState<ITransactionListData[]>([])
   const [highlighData, setHighlightData] = useState<IHighlightData>({} as IHighlightData)
+
+  const { user, signOut } = useAuth()
 
   const theme = useTheme()
 
@@ -176,14 +177,14 @@ export function Dashboard() {
             <Header>
               <UserWrapper>
                 <UserInfo>
-                  <Photo source={{ uri: 'https://avatars.githubusercontent.com/u/41764946?s=60&v=4'}} />
+                  <Photo source={{ uri: user.photo }} />
                   <User>
                     <UserGreeting>Olá,</UserGreeting>
-                    <UserName>Nelson</UserName>
+                    <UserName>{user.name}</UserName>
                   </User>
                 </UserInfo>
 
-                <LogoutButton onPress={() => {}}>
+                <LogoutButton onPress={signOut}>
                   <Icon name="power" />
                 </LogoutButton>
               </UserWrapper>

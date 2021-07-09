@@ -15,7 +15,7 @@ import AppLoading from 'expo-app-loading';
 
 import theme from './src/global/styles/theme'
 
-import { AuthProvider } from './src/hooks/auth';
+import { AuthProvider, useAuth } from './src/hooks/auth';
 import { Routes } from './src/routes';
 
 export default function App() {
@@ -25,6 +25,11 @@ export default function App() {
     Poppins_700Bold
   })
 
+  // const { isAuthStorageLoaded } = useAuth()
+
+  // Linha comentada não funciona
+  // Acho que um hook não pode ser usado no arquivo que o contexto é criado
+  // if (!(fontsLoaded && isAuthStorageLoaded)) {
   if (!fontsLoaded) {
     return <AppLoading />
   }
