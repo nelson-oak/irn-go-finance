@@ -15,10 +15,11 @@ interface ISignInSocialButtonProps extends RectButtonProps {
 
 export function SignInSocialButton({
   title,
-  svg: Svg
+  svg: Svg,
+  ...rest
 }: ISignInSocialButtonProps) {
   return (
-    <Container>
+    <Container {...rest}>
       <ImageContainer>
         <Svg />
       </ImageContainer>
