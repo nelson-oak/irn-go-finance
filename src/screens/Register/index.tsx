@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Keyboard,
   Modal,
@@ -6,7 +6,6 @@ import {
   Alert
 } from "react-native";
 import { useForm } from 'react-hook-form';
-import { useState } from 'react'
 import { useNavigation } from '@react-navigation/core';
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
