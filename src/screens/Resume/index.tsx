@@ -9,6 +9,7 @@ import { HistoryCard } from '../../components/HistoryCard'
 
 import {
   Container,
+  LoadContainer,
   Header,
   Title,
   MonthSelect,
@@ -21,7 +22,7 @@ import { categories } from '../../utils/categories'
 import { string } from 'yup/lib/locale'
 import { RFValue } from 'react-native-responsive-fontsize'
 import { useFocusEffect } from '@react-navigation/native'
-import { FlatList } from 'react-native'
+import { ActivityIndicator, FlatList } from 'react-native'
 
 interface ITransactionData {
   transactionType: 'up' | 'down'
@@ -41,12 +42,15 @@ interface ICategoriesTotal {
 }
 
 export function Resume() {
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [categoriesTotal, setCategoriesTotal] = useState<ICategoriesTotal[]>([])
 
   const theme = useTheme()
 
   function handleDateChange(action: 'prev' | 'next') {
+    setIsLoading(true)
+
     if (action === 'prev') {
       setSelectedDate(subMonths(selectedDate, 1));    } else {
       setSelectedDate(addMonths(selectedDate, 1));
@@ -102,6 +106,7 @@ export function Resume() {
     })
 
     setCategoriesTotal(newCategoriesTotal)
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -118,52 +123,59 @@ export function Resume() {
         <Title>Resumo por categoria</Title>
       </Header>
 
-      <MonthSelect>
-        <MonthSelectButton onPress={() => handleDateChange('prev')}>
-          <MonthSelectIcon name="chevron-left" />
-        </MonthSelectButton>
+      {
+        isLoading
+          ? <LoadContainer>
+            <ActivityIndicator color={theme.colors.primary} size="large" />
+          </LoadContainer>
+          : <>
+              <MonthSelect>
+                <MonthSelectButton onPress={() => handleDateChange('prev')}>
+                  <MonthSelectIcon name="chevron-left" />
+                </MonthSelectButton>
 
-        <Month>
-          {format(selectedDate, 'MMMM, yyyy', { locale: ptBR })}
-        </Month>
-        
-        <MonthSelectButton onPress={() => handleDateChange('next')}>
-          <MonthSelectIcon name="chevron-right" />
-        </MonthSelectButton>
-      </MonthSelect>
+                <Month>
+                  {format(selectedDate, 'MMMM, yyyy', { locale: ptBR })}
+                </Month>
+                
+                <MonthSelectButton onPress={() => handleDateChange('next')}>
+                  <MonthSelectIcon name="chevron-right" />
+                </MonthSelectButton>
+              </MonthSelect>
 
-      <ChartContainer>
-        <VictoryPie
-          data={categoriesTotal}
-          colorScale={categoriesTotal.map(category => category.color)}
-          style={{
-            labels: {
-              fontFamily: theme.fonts.bold,
-              fontWeight: 'bold',
-              fill: theme.colors.shape,
-              fontSize: RFValue(14)
-            },
-          }}
-          height={RFValue(300)}
-          labelRadius={RFValue(70)}
-          x="percentage"
-          y="total"
-        />
-      </ChartContainer>
-        
+              <ChartContainer>
+                <VictoryPie
+                  data={categoriesTotal}
+                  colorScale={categoriesTotal.map(category => category.color)}
+                  style={{
+                    labels: {
+                      fontFamily: theme.fonts.bold,
+                      fontWeight: 'bold',
+                      fill: theme.colors.shape,
+                      fontSize: RFValue(14)
+                    },
+                  }}
+                  height={RFValue(300)}
+                  labelRadius={RFValue(70)}
+                  x="percentage"
+                  y="total"
+                />
+              </ChartContainer>
 
-      <FlatList
-        data={categoriesTotal}
-        style={{ flex: 1, width: '100%', paddingHorizontal: 24 }}
-        keyExtractor={item => item.key}
-        renderItem={({ item }) => (
-          <HistoryCard
-            title={item.name}
-            amount={item.formattedTotal}
-            color={item.color}
-          />
-        )}
-      />
+              <FlatList
+                data={categoriesTotal}
+                style={{ flex: 1, width: '100%', paddingHorizontal: 24 }}
+                keyExtractor={item => item.key}
+                renderItem={({ item }) => (
+                  <HistoryCard
+                    title={item.name}
+                    amount={item.formattedTotal}
+                    color={item.color}
+                  />
+                )}
+              />
+            </>
+      }
     </Container>
   )
 }

@@ -41,6 +41,7 @@ const validationSchema = Yup.object().shape({
     .number()
     .typeError('Informe um valor numérico')
     .positive('Valor não pode ser negativo')
+    .required('Valor é obrigatório'),
 })
 
 export function Register() {
