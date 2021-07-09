@@ -23,13 +23,25 @@ import { ITransactionCardData, TransactionCard } from '../../components/Transact
 import { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useCallback } from 'react'
+import { string } from 'yargs'
 
 export interface ITransactionListData extends ITransactionCardData {
   id: string
 }
 
+interface IHighLightDataProps {
+  total: string
+}
+
+interface IHighlightData {
+  income: IHighLightDataProps
+  outcome: IHighLightDataProps
+  balance: IHighLightDataProps
+}
+
 export function Dashboard() {
   const [transactions, setTransactions] = useState<ITransactionListData[]>([])
+  const [highlighData, setHighlightData] = useState<IHighlightData>({} as IHighlightData)
 
   async function loadTransactions() {
     const dataKey = '@gofinances:transactions'
@@ -37,7 +49,16 @@ export function Dashboard() {
     const data = await AsyncStorage.getItem(dataKey)
     const transactionsData = data ? JSON.parse(data) : []
 
+    let incomeTotal = 0;
+    let outcomeTotal = 0;
+
     const formattedTransactions: ITransactionListData[] = transactionsData.map((transaction: ITransactionListData) => {
+      if (transaction.transactionType === 'up') {
+        incomeTotal += Number(transaction.amount)
+      } else {
+        outcomeTotal += Number(transaction.amount)
+      }
+
       const amount = Number(transaction.amount)
         .toLocaleString('pt-BR', {
           style: 'currency',
@@ -62,6 +83,31 @@ export function Dashboard() {
       }
     })
 
+    const total = incomeTotal - outcomeTotal
+    
+    setHighlightData({
+      income: {
+        total: incomeTotal
+          .toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          }),
+      },
+      outcome: {
+        total: outcomeTotal
+          .toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          }),
+      },
+      balance: {
+        total: total
+          .toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          }),
+      }
+    })
     setTransactions(formattedTransactions)
     console.log(transactions)
   }
@@ -96,19 +142,19 @@ export function Dashboard() {
         <HighlightCard
           type="up"
           title="Entradas"
-          amount="R$ 17.400,00"
+          amount={highlighData.income.total}
           lastTransaction="Última entrada dia 13 de abril"
         />
         <HighlightCard
           type="down"
           title="Saídas"
-          amount="R$ 1.259,00"
+          amount={highlighData.outcome.total}
           lastTransaction="Última saída dia 03 de abril"
         />
         <HighlightCard
           type="total"
           title="Total"
-          amount="R$ 16.141,00"
+          amount={highlighData.balance.total}
           lastTransaction="01 à 16 de abril"
         />
       </HighlightCards>
