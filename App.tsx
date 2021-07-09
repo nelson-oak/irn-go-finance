@@ -16,6 +16,8 @@ import AppLoading from 'expo-app-loading';
 
 import theme from './src/global/styles/theme'
 
+import { AuthContext } from './src/AuthContext';
+
 import { AppRoutes } from './src/routes/app.routs';
 import { SignIn } from './src/screens/SignIn';
 
@@ -35,7 +37,9 @@ export default function App() {
       <NavigationContainer>
         <StatusBar barStyle="light-content" translucent backgroundColor={theme.colors.primary} />
         {/* <AppRoutes /> */}
-        <SignIn />
+        <AuthContext.Provider value={['batata']}>
+          <SignIn />
+        </AuthContext.Provider>
       </NavigationContainer>
     </ThemeProvider>
   );
