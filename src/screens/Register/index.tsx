@@ -6,9 +6,12 @@ import {
   Alert
 } from "react-native";
 import { useForm } from 'react-hook-form';
+import { useState } from 'react'
+import { useNavigation } from '@react-navigation/core';
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid'
 
 import { InputForm } from '../../components/Forms/InputForm'
 import { Button } from '../../components/Forms/Button'
@@ -25,8 +28,6 @@ import {
   Fields,
   TransactionsTypes
 } from './styles'
-import { useState } from 'react'
-import { useEffect } from 'react';
 
 interface IFormData {
   name: string
@@ -51,11 +52,14 @@ export function Register() {
   const [transactionType, setTransactionType] = useState('')
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
 
+  const navigation = useNavigation()
+
   const dataKey = '@gofinances:transactions'
 
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm({
     resolver: yupResolver(validationSchema)
@@ -83,10 +87,12 @@ export function Register() {
     }
     
     const transaction = {
+      id: String(uuid.v4()),
       name,
       amount,
       transactionType,
-      category: category.key
+      category: category.key,
+      date: new Date()
     }
 
     try {
@@ -99,20 +105,21 @@ export function Register() {
       ]
       
       await AsyncStorage.setItem(dataKey, JSON.stringify(newTransactions))
+
+      setCategory({
+        key: 'category',
+        name: 'Categoria',
+      })
+      setTransactionType('')
+
+      reset()
+
+      navigation.navigate('Listagem')
     } catch (error) {
       console.log(error)
       Alert.alert('Não foi possível cadastrar')
     }
   }
-
-  useEffect(() => {
-    async function loadData() {
-      const data = await AsyncStorage.getItem(dataKey)
-      console.log(JSON.parse(data!))
-    }
-
-    loadData()
-  }, [])
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
