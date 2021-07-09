@@ -28,6 +28,7 @@ import { useCallback } from 'react'
 
 export interface ITransactionListData extends ITransactionCardData {
   id: string
+  timestamp: string
 }
 
 interface IHighLightDataProps {
@@ -49,22 +50,32 @@ export function Dashboard() {
   const theme = useTheme()
 
   function getLastTransactionDate(collection: ITransactionListData[], type: 'up' | 'down') {
-    const lastTransactions = new Date(
-      Math.max.apply(
-        Math,
-        collection
-          .filter(item => item.transactionType === type)
-          .map(item => new Date(item.date).getTime())
-      )
+    const lastTransaction = Math.max.apply(
+      Math,
+      collection
+        .filter(item => item.transactionType === type)
+        .map(item => new Date(item.timestamp).getTime())
     )
 
-    const formattedLastTransactions = `${
-      lastTransactions.getDate()
-    } de ${
-      lastTransactions.toLocaleDateString('pt-BR', { month: 'long' })
-    }`
-
-    return formattedLastTransactions
+    try {
+      const formattedLastTransaction = `${
+        Intl
+          .DateTimeFormat('pt-BR', {
+            day: '2-digit',
+          })
+          .format(new Date(lastTransaction))
+      } de ${
+        Intl
+          .DateTimeFormat('pt-BR', {
+            month: 'long',
+          })
+          .format(new Date(lastTransaction))
+      }`
+      
+      return formattedLastTransaction
+    } catch {
+      return '-'
+    }
   }
 
   async function loadTransactions() {
@@ -103,7 +114,8 @@ export function Dashboard() {
         amount,
         transactionType: transaction.transactionType,
         category: transaction.category,
-        date
+        date,
+        timestamp: new Date(transaction.date).getTime()
       }
     })
 
@@ -151,7 +163,7 @@ export function Dashboard() {
 
   useFocusEffect(useCallback(() => {
     loadTransactions()
-  }, []))
+  }, [transactions]))
 
   return (
     <Container>

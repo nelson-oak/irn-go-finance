@@ -1,4 +1,4 @@
-import React,  { useEffect, useState } from 'react'
+import React,  { useCallback, useEffect, useState } from 'react'
 import { useTheme } from 'styled-components'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { VictoryPie } from 'victory-native'
@@ -9,12 +9,17 @@ import {
   Container,
   Header,
   Title,
+  MonthSelect,
+  MonthSelectButton,
+  MonthSelectIcon,
+  Month,
   ChartContainer,
-  Content,
 } from './styles'
 import { categories } from '../../utils/categories'
 import { string } from 'yup/lib/locale'
 import { RFValue } from 'react-native-responsive-fontsize'
+import { useFocusEffect } from '@react-navigation/native'
+import { FlatList } from 'react-native'
 
 interface ITransactionData {
   transactionType: 'up' | 'down'
@@ -89,11 +94,27 @@ export function Resume() {
     loadData()
   }, [])
 
+  useFocusEffect(useCallback(() => {
+    loadData()
+  }, []))
+
   return (
     <Container>
       <Header>
         <Title>Resumo por categoria</Title>
       </Header>
+
+      <MonthSelect>
+        <MonthSelectButton>
+          <MonthSelectIcon name="chevron-left" />
+        </MonthSelectButton>
+
+        <Month>Agosto</Month>
+        
+        <MonthSelectButton>
+          <MonthSelectIcon name="chevron-right" />
+        </MonthSelectButton>
+      </MonthSelect>
 
       <ChartContainer>
         <VictoryPie
@@ -112,19 +133,20 @@ export function Resume() {
           y="total"
         />
       </ChartContainer>
+        
 
-      <Content>
-        {
-          categoriesTotal.map(category => (
-            <HistoryCard
-              key={category.key}
-              title={category.name}
-              amount={category.formattedTotal}
-              color={category.color}
-            />
-          ))
-        }
-      </Content>
+      <FlatList
+        data={categoriesTotal}
+        style={{ flex: 1, width: '100%', paddingHorizontal: 24 }}
+        keyExtractor={item => item.key}
+        renderItem={({ item }) => (
+          <HistoryCard
+            title={item.name}
+            amount={item.formattedTotal}
+            color={item.color}
+          />
+        )}
+      />
     </Container>
   )
 }
