@@ -21,9 +21,11 @@ export const Container = styled.View<IContainerProps>`
 export const Title = styled.Text`
   font-family: ${({ theme }) => theme.fonts.regular};
   font-size: ${RFValue(15)}px;
+  color: ${({ theme }) => theme.colors.title};
 `
 
 export const Amount = styled.Text`
   font-family: ${({ theme }) => theme.fonts.bold};
   font-size: ${RFValue(15)}px;
+  color: ${({ theme }) => theme.colors.title};
 `
