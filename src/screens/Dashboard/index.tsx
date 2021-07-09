@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { useTheme } from 'styled-components'
 import { useFocusEffect } from '@react-navigation/core'
@@ -156,6 +156,10 @@ export function Dashboard() {
     
     setIsLoading(false)
   }
+
+  useEffect(() => {
+    loadTransactions()
+  }, [])
 
   useFocusEffect(useCallback(() => {
     loadTransactions()
