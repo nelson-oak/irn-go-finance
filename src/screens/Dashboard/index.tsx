@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { useTheme } from 'styled-components'
-
 import { useFocusEffect } from '@react-navigation/core'
+
 
 import {
   Container,
@@ -23,10 +23,8 @@ import {
 } from './styles'
 import { HighlightCard } from '../../components/HighlightCard'
 import { ITransactionCardData, TransactionCard } from '../../components/TransactionCard'
-import { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useCallback } from 'react'
-import { string } from 'yargs'
 
 export interface ITransactionListData extends ITransactionCardData {
   id: string
