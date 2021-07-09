@@ -1,8 +1,8 @@
-import React, { createContext, ReactNode, useContext } from 'react'
-
-import * as Google from 'expo-google-app-auth'
+import React, { createContext, ReactNode, useContext, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useState } from 'react'
+import * as GoogleAuth from 'expo-google-app-auth'
+import * as AppleAuth from 'expo-apple-authentication'
+
 
 interface IAuthProviderProps {
   children: ReactNode
@@ -18,6 +18,7 @@ interface IUser {
 interface IAuthContextData {
   user: IUser
   signInWithGoogle: () => Promise<void>
+  signInWithApple: () => Promise<void>
 }
 
 const AuthContext = createContext({} as IAuthContextData)
@@ -27,18 +28,43 @@ function AuthProvider({ children }: IAuthProviderProps) {
 
   async function signInWithGoogle() {
     try {
-      const result = await Google.logInAsync({
+      const response = await GoogleAuth.logInAsync({
         androidClientId: '',
         iosClientId: '',
         scopes: ['profile', 'email']
       })
 
-      if (result.type === 'success') {
+      if (response.type === 'success') {
         const userLogged = {
-          id: result.user.id!,
-          email: result.user.email!,
-          name: result.user.name!,
-          photo: result.user.photoUrl!
+          id: response.user.id!,
+          email: response.user.email!,
+          name: response.user.name!,
+          photo: response.user.photoUrl!
+        }
+
+        await AsyncStorage.setItem('@gofinances:user', JSON.stringify(userLogged))
+        setUser(userLogged)
+      }
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
+
+  async function signInWithApple() {
+    try {
+      const userData = await AppleAuth.signInAsync({
+        requestedScopes: [
+          AppleAuth.AppleAuthenticationScope.FULL_NAME,
+          AppleAuth.AppleAuthenticationScope.EMAIL
+        ]
+      })
+
+      if (userData) {
+        const userLogged = {
+          id: userData.user,
+          email: userData.email!,
+          name: userData.fullName!.givenName!,
+          photo: undefined
         }
 
         await AsyncStorage.setItem('@gofinances:user', JSON.stringify(userLogged))
@@ -52,7 +78,8 @@ function AuthProvider({ children }: IAuthProviderProps) {
   return (
     <AuthContext.Provider value={{
       user,
-      signInWithGoogle
+      signInWithGoogle,
+      signInWithApple
     }}>
       {children}
     </AuthContext.Provider>
