@@ -82,7 +82,7 @@ export function Register() {
       return Alert.alert('Selecione a categoria')
     }
     
-    const data = {
+    const transaction = {
       name,
       amount,
       transactionType,
@@ -90,8 +90,15 @@ export function Register() {
     }
 
     try {
-      await AsyncStorage.setItem(dataKey, JSON.stringify(data))
+      const data = await AsyncStorage.getItem(dataKey)
+      const currentTransactions = data ? JSON.parse(data) : []
 
+      const newTransactions = [
+        ...currentTransactions,
+        transaction
+      ]
+      
+      await AsyncStorage.setItem(dataKey, JSON.stringify(newTransactions))
     } catch (error) {
       console.log(error)
       Alert.alert('Não foi possível cadastrar')
