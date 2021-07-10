@@ -27,7 +27,6 @@ import { useAuth } from '../../hooks/auth'
 
 export interface ITransactionListData extends ITransactionCardData {
   id: string
-  timestamp: string
 }
 
 interface IHighLightDataProps {
@@ -55,7 +54,7 @@ export function Dashboard() {
       Math,
       collection
         .filter(item => item.transactionType === type)
-        .map(item => new Date(item.timestamp).getTime())
+        .map(item => new Date(item.date).getTime())
     )
 
     try {
@@ -75,7 +74,7 @@ export function Dashboard() {
       
       return formattedLastTransaction
     } catch {
-      return '-'
+      return 0
     }
   }
 
@@ -122,9 +121,11 @@ export function Dashboard() {
 
     setTransactions(formattedTransactions)
 
-    const lastIncomeTransaction = getLastTransactionDate(transactions, 'up')
-    const lastOutcomeTransaction = getLastTransactionDate(transactions, 'down')
-    const totalInterval = `01 a ${lastOutcomeTransaction}`
+    const lastIncomeTransaction = getLastTransactionDate(transactionsData, 'up')
+    const lastOutcomeTransaction = getLastTransactionDate(transactionsData, 'down')
+    const totalInterval = lastOutcomeTransaction === 0
+      ? 'Não há transações'
+      : `01 a ${lastOutcomeTransaction}`
 
     const total = incomeTotal - outcomeTotal
     
@@ -135,7 +136,9 @@ export function Dashboard() {
             style: 'currency',
             currency: 'BRL'
           }),
-        lastTransaction: `Última entrada dia ${lastIncomeTransaction}`
+        lastTransaction: lastIncomeTransaction === 0
+          ? 'Não há transações'
+          : `Última entrada dia ${lastIncomeTransaction}`
       },
       outcome: {
         total: outcomeTotal
@@ -143,7 +146,9 @@ export function Dashboard() {
             style: 'currency',
             currency: 'BRL'
           }),
-        lastTransaction: `Última saída dia ${lastOutcomeTransaction}`
+        lastTransaction: lastOutcomeTransaction === 0
+          ? 'Não há transações'
+          : `Última saída dia ${lastOutcomeTransaction}`
       },
       balance: {
         total: total
