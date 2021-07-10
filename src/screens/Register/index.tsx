@@ -17,6 +17,7 @@ import { Button } from '../../components/Forms/Button'
 import { TransactionTypeButton } from '../../components/Forms/TransactionTypeButton'
 import { CategorySelectButton } from '../../components/Forms/CategorySelectButton'
 
+import { useAuth } from '../../hooks/auth';
 import { CategorySelect } from '../CategorySelect';
 
 import {
@@ -51,6 +52,8 @@ export function Register() {
   })
   const [transactionType, setTransactionType] = useState('')
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
+  
+  const { user } = useAuth()
 
   const navigation = useNavigation()
 
@@ -94,7 +97,7 @@ export function Register() {
     }
 
     try {
-      const dataKey = '@gofinances:transactions'
+      const dataKey = `@gofinances:transactions?user=${user.id}`
 
       const data = await AsyncStorage.getItem(dataKey)
       const currentTransactions = data ? JSON.parse(data) : []

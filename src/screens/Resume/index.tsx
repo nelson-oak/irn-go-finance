@@ -22,6 +22,7 @@ import { categories } from '../../utils/categories'
 import { RFValue } from 'react-native-responsive-fontsize'
 import { useFocusEffect } from '@react-navigation/native'
 import { ActivityIndicator, FlatList } from 'react-native'
+import { useAuth } from '../../hooks/auth'
 
 interface ITransactionData {
   transactionType: 'up' | 'down'
@@ -45,6 +46,8 @@ export function Resume() {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [categoriesTotal, setCategoriesTotal] = useState<ICategoriesTotal[]>([])
 
+  const { user } = useAuth()
+
   const theme = useTheme()
 
   function handleDateChange(action: 'prev' | 'next') {
@@ -57,7 +60,7 @@ export function Resume() {
   async function loadData() {
     setIsLoading(true)
 
-    const dataKey = '@gofinances:transactions'
+    const dataKey = `@gofinances:transactions?user=${user.id}`
 
     const data = await AsyncStorage.getItem(dataKey)
     const transactions: ITransactionData[] = data ? JSON.parse(data) : []

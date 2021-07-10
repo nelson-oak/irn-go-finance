@@ -6,6 +6,11 @@ Aplicação desenvolvida no bootcamp ignite - trilha react native
 
 | Número | Funcionalidade |
 | - | - |
+| 1 | Autenticação com contas Google e Apple |
+| 2 | Cadastrar uma transação |
+| 3 | Listar transações cadastradas |
+| 4 | Listar dados de entrada, saída e saldo |
+| 5 | Exibir relatório de saídas por mês |
 
 ## Recursos
 
