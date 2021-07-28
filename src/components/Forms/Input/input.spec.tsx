@@ -1,7 +1,15 @@
 import React from 'react'
 import { render } from '@testing-library/react-native'
+import { ThemeProvider } from 'styled-components/native'
 
+import theme from '../../../global/styles/theme'
 import { Input } from '.'
+
+const Providers: React.FC = ({ children }) => (
+  <ThemeProvider theme={theme}>
+    { children }
+  </ThemeProvider>
+)
 
 describe('Input Component', () => {
   it('should be able to render border when active', () => {
@@ -12,12 +20,15 @@ describe('Input Component', () => {
         keyboardType="email-address"
         autoCorrect={false}
         active
-      />
+      />,
+      {
+        wrapper: Providers
+      }
     )
 
     const inputComponent = getByTestId('input-email')
 
-    expect(inputComponent.props.style[0].borderColor).toEqual('red')
+    expect(inputComponent.props.style[0].borderColor).toEqual(theme.colors.attention)
     expect(inputComponent.props.style[0].borderWidth).toBe(3)
   })
 })
