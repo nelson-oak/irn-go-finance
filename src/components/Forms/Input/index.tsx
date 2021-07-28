@@ -6,10 +6,18 @@ import {
   Container
 } from './styles'
 
-type InputProps = TextInputProps
+interface IInputProps extends TextInputProps {
+  active?: boolean
+}
 
-export function Input({ ...rest }: InputProps) {
+export function Input({
+  active = false,
+  ...rest
+}: IInputProps) {
   return (
-    <Container {...rest} />
+    <Container
+      active={active}
+      {...rest}
+    />
   )
 }
