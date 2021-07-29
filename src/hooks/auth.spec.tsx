@@ -48,4 +48,23 @@ describe('Auth Hook', () => {
 
     expect(result.current.user).not.toHaveProperty('id')
   })
+
+  // Falta aprender a fazer teste com erros
+  // it('should be able to throw a error if Google authentication throws', async () => {
+  //   const googleMocked = mocked(logInAsync)
+  //   googleMocked.mockImplementationOnce(() => {
+  //     throw new Error('teste')
+  //   })
+
+  //   const { result } = renderHook(
+  //     () => useAuth(),
+  //     {
+  //       wrapper: AuthProvider
+  //     }
+  //   )
+
+  //   expect(
+  //     await act(() => result.current.signInWithGoogle())
+  //   ).toThrow()
+  // })
 })
