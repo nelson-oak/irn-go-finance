@@ -71,9 +71,7 @@ export function Register() {
   }
 
   function handleOpenSelectCategoryModal() {
-    setTimeout(() => {
-      setIsCategoryModalOpen(true)
-    }, 1000)
+    setIsCategoryModalOpen(true)
   }
 
   function handleCloseSelectCategoryModal() {

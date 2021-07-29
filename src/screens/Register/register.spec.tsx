@@ -16,7 +16,7 @@ const Providers: React.FC = ({ children }) => (
 jest.mock('@react-navigation/core')
 
 describe('RegisterScreen', () => {
-  it('should be able to open category modal when click on category button', async () => {
+  it('should be able to open category modal when click on category button', () => {
     const navigationMocked = mocked(useNavigation as any)
     navigationMocked.mockReturnValueOnce({
       navigate: () => {}
@@ -35,8 +35,6 @@ describe('RegisterScreen', () => {
 
     fireEvent.press(categorySelectButton)
 
-    await waitFor(() => {
-      expect(categoryModal.props.visible).toBeTruthy()
-    })
+    expect(categoryModal.props.visible).toBeTruthy()
   })
 })
